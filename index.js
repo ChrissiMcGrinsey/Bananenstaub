@@ -5,6 +5,7 @@ const sharp = require('sharp');
 const sourceDir = './sourceImages';
 const destinationDir = './resizedImages';
 const MAX_SIZE = 5120 * 1024; // 5120 KB in Bytes
+console.log(MAX_SIZE);
 
 if (!fs.existsSync(destinationDir)) {
     fs.mkdirSync(destinationDir);
