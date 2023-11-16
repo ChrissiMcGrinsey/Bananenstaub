@@ -6,6 +6,26 @@ const sourceDir = './sourceImages';
 const destinationDir = './resizedImages';
 const MAX_SIZE = 5120 * 1024; // 5120 KB in Bytes
 
+const resolutions = [
+        { width: 1200, height: 630, prefix: 'facebook' },
+        { width: 1200, height: 1200, prefix: 'instagram' },
+        { width: 1200, height: 675, prefix: 'twitter'},
+        { width: 468, height: 60, prefix: 'banner'},
+        { width: 728, height: 90, prefix: 'leaderboard'},
+        { width: 300, height: 250, prefix: 'mediumRectangle'},
+        { width: 300, height: 600, prefix: 'halfPage'},
+        { width: 320, height: 50, prefix: 'mobileLeaderboard'},
+        { width: 320, height: 100, prefix: 'largeMobileBanner'},
+        { width: 320, height: 320, prefix: 'mobileSquare'},
+        { width: 320, height: 480, prefix: 'smartphone'},
+        { width: 480, height: 320, prefix: 'smartphone'},
+        { width: 160, height: 600, prefix: 'wideSkyscraper'},
+        { width: 120, height: 600, prefix: 'skyscraper'},
+        { width: 1080, height: 1920, prefix: 'story'},
+        { width: 1920, height: 1080, prefix: 'landscape'},
+        { width: 1080, height: 1080, prefix: 'square'},
+    ]
+
 if (!fs.existsSync(destinationDir)) {
     fs.mkdirSync(destinationDir);
 }
@@ -32,21 +52,27 @@ const resizeImageWithMaxSize = (inputPath, outputPath, width, height) => {
 
     return resizeAndCheck();
 };
-
+if(files.length > 0){
 files.forEach(file => {
     const filePath = path.join(sourceDir, file);
-    const outputPathLandscape = path.join(destinationDir, 'landscape_' + path.basename(file, path.extname(file)) + '.webp');
-    const outputPathSquare = path.join(destinationDir, 'square_' + path.basename(file, path.extname(file)) + '.webp');
 
     if (['.jpg', '.png'].includes(path.extname(file))) {
-        resizeImageWithMaxSize(filePath, outputPathLandscape, 1200, 628).catch(err => {
-            console.error(`Fehler beim Bearbeiten von ${file} für Landscape:`, err);
-        });
-
-        resizeImageWithMaxSize(filePath, outputPathSquare, 1200, 1200).catch(err => {
-            console.error(`Fehler beim Bearbeiten von ${file} für Square:`, err);
-        });
+ 
+        for(let resolution of resolutions) {
+            const fileName = `${resolution.prefix}-${path.basename(file, path.extname(file))}_${resolution.width}x${resolution.height}.webp`;
+            const outputPath = path.join(destinationDir, fileName);
+            resizeImageWithMaxSize(filePath,
+                outputPath,
+                resolution.width, 
+                resolution.height).catch(err => {
+                console.error(`Fehler beim Bearbeiten von ${file} für ${resolution.prefix}:`, err);
+                });
+        }
     }
 });
+} else {
+    console.log('Keine Bilder gefunden.');
+    return;
+}
 
 console.log('Bilder wurden verarbeitet und im Ordner resizedImages gespeichert.');
