@@ -72,7 +72,6 @@ files.forEach(file => {
 });
 } else {
     console.log('Keine Bilder gefunden.');
-    return;
 }
 
 console.log('Bilder wurden verarbeitet und im Ordner resizedImages gespeichert.');
